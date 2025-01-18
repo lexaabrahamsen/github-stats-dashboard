@@ -3,6 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
+import { PieChart } from '@mui/x-charts/PieChart';
+import { Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 const token = import.meta.env.VITE_GITHUB_TOKEN;
 
@@ -101,32 +104,34 @@ function App() {
   if (reposError instanceof Error)
     return <div>Error: {reposError.message}</div>;
   if (userError instanceof Error) return <div>Error: {userError.message}</div>;
+  // Prepare data for Pie Chart
+  const languageData = Object.entries(githubLanguages).map(
+    ([language, value]) => ({
+      id: language,
+      label: language,
+      value,
+    })
+  );
 
+  const COLORS = [
+    '#0088FE',
+    '#00C49F',
+    '#FFBB28',
+    '#FF8042',
+    '#FF6384',
+    '#36A2EB',
+  ];
+  console.log(userDetails);
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank" rel="noopener noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noopener noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card" style={{ backgroundColor: 'red' }}>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <h2>User Details</h2>
-      {/* avtar image */}
-      <img src={userDetails.avatar_url} alt="Avatar" />
+      <Grid container>
+        <Grid>
+          <Typography variant="h1">{userDetails.login}</Typography>
+        </Grid>
+        <Grid>
+          <img src={userDetails.avatar_url} alt="Avatar" />
+        </Grid>
+      </Grid>
       <p>Name: {userDetails.name}</p>
       <p>Followers: {userDetails.followers}</p>
       <p>Following: {userDetails.following}</p>
@@ -153,6 +158,18 @@ function App() {
           </li>
         ))}
       </ul>
+      <h1>GitHub Repository Language Breakdown</h1>
+      <PieChart
+        series={[
+          {
+            data: languageData,
+            highlightScope: { fade: 'global', highlight: 'item' },
+            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+            valueFormatter: (item: any) => `${item.value}`,
+          },
+        ]}
+        height={300}
+      />
     </>
   );
 }
