@@ -10,9 +10,9 @@ import Grid from '@mui/material/Grid2';
 const token = import.meta.env.VITE_GITHUB_TOKEN;
 
 // Fetch GitHub repositories
-const fetchGithubRepos = async () => {
+const fetchGithubRepos = async (username: string) => {
   const githubRepos = await fetch(
-    'https://api.github.com/users/lexaabrahamsen/repos',
+    'https://api.github.com/users/${username}/repos',
     {
       headers: {
         Authorization: `token ${token}`,
@@ -53,8 +53,8 @@ const fetchGithubLanguages = async (repos: any[]) => {
 };
 
 // Fetch user details
-const fetchUserDetails = async () => {
-  const userDetails = await fetch('https://api.github.com/user', {
+const fetchUserDetails = async (username: string) => {
+  const userDetails = await fetch('https://api.github.com/users/${username}', {
     headers: {
       Authorization: `token ${token}`,
     },
@@ -66,6 +66,8 @@ const fetchUserDetails = async () => {
 };
 
 function App() {
+  const [username, setUsername] = useState('lexaabrahamsen');
+  const [searchInput, setSearchInput] = useState('');
   const [count, setCount] = useState(0);
 
   // Use React Query to fetch repositories
@@ -74,8 +76,9 @@ function App() {
     isLoading: reposLoading,
     error: reposError,
   } = useQuery({
-    queryKey: ['githubRepos'],
-    queryFn: fetchGithubRepos,
+    queryKey: ['githubRepos', username],
+    queryFn: () => fetchGithubRepos(username),
+    enabled: !!username,
   });
 
   // Use React Query to fetch languages
@@ -91,9 +94,15 @@ function App() {
     isLoading: userLoading,
     error: userError,
   } = useQuery({
-    queryKey: ['userDetails'],
-    queryFn: fetchUserDetails,
+    queryKey: ['userDetails', username],
+    queryFn: () => fetchUserDetails(username),
+    enabled: !!username,
   });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setUsername(searchInput.trim());
+  };
 
   // Sort and slice the top 8 repositories
   const topRepos = githubRepos
@@ -104,6 +113,7 @@ function App() {
   if (reposError instanceof Error)
     return <div>Error: {reposError.message}</div>;
   if (userError instanceof Error) return <div>Error: {userError.message}</div>;
+
   // Prepare data for Pie Chart
   const languageData = Object.entries(githubLanguages).map(
     ([language, value]) => ({
@@ -126,8 +136,15 @@ function App() {
     <>
       <Grid container>
         <Grid>
-          <Typography variant="h1">{userDetails.login}</Typography>
+          <Typography variant="h1">GitHub Profile</Typography>
+          <form onSubmit={handleSearch}>
+            <input type="text" onChange={(e) => setUsername(e.target.value)} placeholder="Enter Github username" />
+          </form>
         </Grid>
+        <Grid>
+          <Typography variant="h1">User Details</Typography>
+        </Grid>
+          <Typography variant="h1">{userDetails.login}</Typography>
         <Grid>
           <img src={userDetails.avatar_url} alt="Avatar" />
         </Grid>
