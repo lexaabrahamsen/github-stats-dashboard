@@ -1,51 +1,45 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Typography, Grid, TextField, Button } from '@mui/material';
 
 const token = import.meta.env.VITE_GITHUB_TOKEN;
 
 // Fetch GitHub repositories
 const fetchGithubRepos = async (username: string) => {
-  const githubRepos = await fetch(
-    'https://api.github.com/users/${username}/repos',
+  const response = await fetch(
+    `https://api.github.com/users/${username}/repos`,
     {
-      headers: {
-        Authorization: `token ${token}`,
-      },
+      headers: { Authorization: `token ${token}` },
     }
   );
-  if (!githubRepos.ok) {
+  if (!response.ok) {
     throw new Error('Failed to fetch repositories');
   }
-  return githubRepos.json();
+  return response.json();
 };
 
 // Fetch languages for all repositories
 const fetchGithubLanguages = async (repos: any[]) => {
   const languageData = await Promise.all(
     repos.map(async (repo: any) => {
-      const githubLanguages = await fetch(repo.languages_url, {
-        headers: {
-          Authorization: `token ${token}`,
-        },
+      const response = await fetch(repo.languages_url, {
+        headers: { Authorization: `token ${token}` },
       });
-      if (!githubLanguages.ok) {
+      if (!response.ok) {
         console.error(`Failed to fetch languages for ${repo.name}`);
         return {};
       }
-      return githubLanguages.json();
+      return response.json();
     })
   );
 
   const languageCounts: Record<string, number> = {};
   languageData.forEach((languages) => {
     Object.keys(languages).forEach((language) => {
-      languageCounts[language] = (languageCounts[language] || 0) + 1;
+      languageCounts[language] =
+        (languageCounts[language] || 0) + languages[language];
     });
   });
 
@@ -54,65 +48,46 @@ const fetchGithubLanguages = async (repos: any[]) => {
 
 // Fetch user details
 const fetchUserDetails = async (username: string) => {
-  const userDetails = await fetch('https://api.github.com/users/${username}', {
-    headers: {
-      Authorization: `token ${token}`,
-    },
+  const response = await fetch(`https://api.github.com/users/${username}`, {
+    headers: { Authorization: `token ${token}` },
   });
-  if (!userDetails.ok) {
+  if (!response.ok) {
     throw new Error('Failed to fetch user details');
   }
-  return userDetails.json();
+  return response.json();
 };
 
 function App() {
-  const [username, setUsername] = useState('lexaabrahamsen');
+  const [username, setUsername] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState('');
-  const [count, setCount] = useState(0);
 
-  // Use React Query to fetch repositories
-  const {
-    data: githubRepos = [],
-    isLoading: reposLoading,
-    error: reposError,
-  } = useQuery({
+  // Repositories Query
+  const { data: githubRepos = [], isLoading: reposLoading } = useQuery({
     queryKey: ['githubRepos', username],
-    queryFn: () => fetchGithubRepos(username),
+    queryFn: () => fetchGithubRepos(username!), // Ensure username is non-null
+    enabled: !!username, // Ensure the query runs only if username is truthy
+  });
+
+  // User Details Query
+  const { data: userDetails, isLoading: userLoading } = useQuery({
+    queryKey: ['userDetails', username],
+    queryFn: () => fetchUserDetails(username!), // Fetch function
     enabled: !!username,
   });
 
-  // Use React Query to fetch languages
+  // Languages Query
   const { data: githubLanguages = {} } = useQuery({
     queryKey: ['githubLanguages', githubRepos],
-    queryFn: () => fetchGithubLanguages(githubRepos),
+    queryFn: () => fetchGithubLanguages(githubRepos), // Fetch function
     enabled: !!githubRepos.length,
-  });
-
-  // Use React Query to fetch user details
-  const {
-    data: userDetails,
-    isLoading: userLoading,
-    error: userError,
-  } = useQuery({
-    queryKey: ['userDetails', username],
-    queryFn: () => fetchUserDetails(username),
-    enabled: !!username,
   });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setUsername(searchInput.trim());
+    if (searchInput.trim()) {
+      setUsername(searchInput.trim());
+    }
   };
-
-  // Sort and slice the top 8 repositories
-  const topRepos = githubRepos
-    .sort((a: any, b: any) => b.stargazers_count - a.stargazers_count) // Sort by stars
-    .slice(0, 8); // Take the top 8
-
-  if (reposLoading || userLoading) return <div>Loading...</div>;
-  if (reposError instanceof Error)
-    return <div>Error: {reposError.message}</div>;
-  if (userError instanceof Error) return <div>Error: {userError.message}</div>;
 
   // Prepare data for Pie Chart
   const languageData = Object.entries(githubLanguages).map(
@@ -123,71 +98,96 @@ function App() {
     })
   );
 
-  const COLORS = [
-    '#0088FE',
-    '#00C49F',
-    '#FFBB28',
-    '#FF8042',
-    '#FF6384',
-    '#36A2EB',
-  ];
-  console.log(userDetails);
+  // Sort and slice the top 8 repositories
+  const topRepos = githubRepos
+    .sort((a: any, b: any) => b.stargazers_count - a.stargazers_count) // Sort by stars
+    .slice(0, 8); // Take the top 8
+
   return (
-    <>
-      <Grid container>
-        <Grid>
-          <Typography variant="h1">GitHub Profile</Typography>
-          <form onSubmit={handleSearch}>
-            <input type="text" onChange={(e) => setUsername(e.target.value)} placeholder="Enter Github username" />
-          </form>
+    <div style={{ padding: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        GitHub Profile Dashboard
+      </Typography>
+      <form onSubmit={handleSearch}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item>
+            <TextField
+              label="GitHub Username"
+              variant="outlined"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </Grid>
+          <Grid item>
+            <Button type="submit" variant="contained" color="primary">
+              Search
+            </Button>
+          </Grid>
         </Grid>
-        <Grid>
-          <Typography variant="h1">User Details</Typography>
-        </Grid>
-          <Typography variant="h1">{userDetails.login}</Typography>
-        <Grid>
-          <img src={userDetails.avatar_url} alt="Avatar" />
-        </Grid>
-      </Grid>
-      <p>Name: {userDetails.name}</p>
-      <p>Followers: {userDetails.followers}</p>
-      <p>Following: {userDetails.following}</p>
-      <p>Repository Count: {githubRepos.length}</p>
-      <h2>Top 8 Repositories</h2>
-      <ul>
-        {topRepos.map((repo: any) => (
-          <li key={repo.id}>
-            <strong>{repo.name}</strong> - ⭐ {repo.stargazers_count}
-          </li>
-        ))}
-      </ul>
-      <ul>
-        <h3>Repositories</h3>
-        {githubRepos.map((repo: any) => (
-          <li key={repo.id}>{repo.name}</li>
-        ))}
-      </ul>
-      <ul>
-        <h3>Languages</h3>
-        {Object.entries(githubLanguages).map(([language, count]) => (
-          <li key={language}>
-            {language}: {count}
-          </li>
-        ))}
-      </ul>
-      <h1>GitHub Repository Language Breakdown</h1>
-      <PieChart
-        series={[
-          {
-            data: languageData,
-            highlightScope: { fade: 'global', highlight: 'item' },
-            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-            valueFormatter: (item: any) => `${item.value}`,
-          },
-        ]}
-        height={300}
-      />
-    </>
+      </form>
+
+      {/* Conditionally Render Dashboard */}
+      {username && (
+        <div>
+          {reposLoading || userLoading ? (
+            <Typography variant="h6">Loading...</Typography>
+          ) : (
+            <>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                style={{ marginTop: '20px' }}
+              >
+                <Grid item>
+                  <img
+                    src={userDetails.avatar_url}
+                    alt="Avatar"
+                    style={{ width: '100px', borderRadius: '50%' }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Typography variant="h5">{userDetails.name}</Typography>
+                  <Typography>Followers: {userDetails.followers}</Typography>
+                  <Typography>Following: {userDetails.following}</Typography>
+                  <Typography>Repositories: {githubRepos.length}</Typography>
+                </Grid>
+              </Grid>
+
+              <Typography variant="h6" style={{ marginTop: '20px' }}>
+                Top Repositories
+              </Typography>
+              <ul>
+                {topRepos.map((repo: any) => (
+                  <li key={repo.id}>
+                    <strong>{repo.name}</strong> - ⭐ {repo.stargazers_count}
+                  </li>
+                ))}
+              </ul>
+
+              <Typography variant="h6" style={{ marginTop: '20px' }}>
+                Languages Breakdown
+              </Typography>
+              <PieChart
+                series={[
+                  {
+                    data: languageData,
+                    highlightScope: { fade: 'global', highlight: 'item' },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: 'gray',
+                    },
+                    valueFormatter: (item: any) => `${item.value} bytes`,
+                  },
+                ]}
+                height={300}
+              />
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
