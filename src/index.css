@@ -1,5 +1,7 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: 'Jost', 'Futura', 'Trebuchet MS', system-ui, sans-serif;
+  font-optical-sizing: auto;
   line-height: 1.5;
   font-weight: 400;
 
@@ -23,6 +25,7 @@ a:hover {
 }
 
 body {
+  font-family: inherit;
   margin: 0;
   display: flex;
   place-items: center;

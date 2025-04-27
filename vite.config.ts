@@ -5,6 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    hmr: true, // Ensure HMR is enabled
+    // hmr: true, // Ensure HMR is enabled
+    watch: {
+      usePolling: true,   // 🔥 force file watching via polling
+      interval: 100,      // optional tweak
+    },
+    host: 'localhost',
+    port: 5173,
   },
 })
