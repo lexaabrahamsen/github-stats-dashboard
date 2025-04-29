@@ -4,8 +4,6 @@ import { Layout } from './layouts/Layout';
 import { SearchPage } from './pages/SearchPage';
 import { UserProfilePage } from './pages/UserProfilePage';
 
-
-// Main App
 function App() {
   return (
     <BrowserRouter>

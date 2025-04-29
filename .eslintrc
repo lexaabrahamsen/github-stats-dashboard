@@ -1,0 +1,263 @@
+{
+  "plugins": [
+    "prettier",
+    "@typescript-eslint",
+    "lodash",
+    "etc",
+    "react-compiler",
+    "import",
+    "unicorn"
+  ],
+  "extends": [
+    "airbnb-typescript",
+    "plugin:react/recommended",
+    "plugin:lodash/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  },
+  "rules": {
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "object-curly-spacing": [
+      "warn",
+      "always"
+    ],
+    "no-unused-vars": "off",
+    "semi": "off",
+    "object-shorthand": "error",
+    "prefer-object-spread": "error",
+    "prefer-arrow-callback": "error",
+    "@typescript-eslint/semi": [
+      "error",
+      "never"
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "none",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "variable",
+        "format": [
+          "strictCamelCase",
+          "UPPER_CASE",
+          "StrictPascalCase"
+        ],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "typeLike",
+        "format": [
+          "PascalCase",
+          "StrictPascalCase"
+        ]
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "React.FC": ""
+        }
+      }
+    ],
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": true
+      }
+    ],
+    "@typescript-eslint/consistent-type-definitions": "warn",
+    "@typescript-eslint/no-inferrable-types": "error",
+    "@typescript-eslint/no-unnecessary-type-assertion": "error",
+    "@typescript-eslint/require-array-sort-compare": "error",
+    "max-len": "off",
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": false
+      }
+    ],
+    "react/jsx-key": "error",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ],
+    "react/jsx-props-no-spreading": "off",
+    "import/no-default-export": "error",
+    "import/prefer-default-export": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react",
+            "importNames": [
+              "default"
+            ],
+            "message": "Please use named imports instead of React.* namespace"
+          }
+        ]
+      }
+    ],
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "process",
+        "property": "env",
+        "message": "Please add a property to appConfig in @/config.ts using import.meta.env.VARIABLE_NAME instead"
+      }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "CallExpression[callee.name='enqueueSnackbar']",
+        "message": "Please use 'notify' from notifications service (useNotifications) instead of enqueueSnackbar"
+      },
+      {
+        "selector": "MemberExpression[object.meta.name='import']",
+        "message": "Please add this value to appConfig, rather than accessing import.meta directly here"
+      }
+    ],
+    "import/extensions": "off",
+    "react/display-name": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-boolean-value": [
+      "warn",
+      "never"
+    ],
+    "react/prop-types": "warn",
+    "react/no-unescaped-entities": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-wrap-multilines": "off",
+    "react/jsx-curly-brace-presence": "warn",
+    "react/jsx-no-useless-fragment": [
+      "warn",
+      {
+        "allowExpressions": true
+      }
+    ],
+    "react/self-closing-comp": "warn",
+    "react/destructuring-assignment": [
+      "error",
+      "always",
+      {
+        "destructureInSignature": "always"
+      }
+    ],
+    "react-hooks/exhaustive-deps": "error",
+    "react-compiler/react-compiler": "off",
+    "lodash/prefer-lodash-method": "off",
+    "lodash/import-scope": [
+      "error",
+      "member"
+    ],
+    "etc/no-commented-out-code": "warn",
+    "unicorn/no-useless-spread": "error",
+    "unicorn/prefer-logical-operator-over-ternary": "error",
+    "unicorn/prefer-top-level-await": "error",
+    "unicorn/prefer-default-parameters": "error",
+    "unicorn/prefer-array-find": "error",
+    "unicorn/prefer-array-flat": "error",
+    "unicorn/prefer-array-flat-map": "error",
+    "unicorn/prefer-array-some": "error",
+    "unicorn/no-useless-undefined": "error",
+    "unicorn/prefer-ternary": "warn",
+    "unicorn/prefer-optional-catch-binding": "warn",
+    "arrow-body-style": "warn",
+    "prefer-const": "error",
+    "no-alert": "warn",
+    "no-debugger": "warn",
+    "no-warning-comments": "warn",
+    "no-nested-ternary": "error",
+    "no-useless-return": "error",
+    "no-empty": [
+      "error",
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    "no-console": [
+      "warn",
+      {
+        "allow": [
+          "warn",
+          "error",
+          "info"
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/test/**",
+        "src/__mocks__/**",
+        "tools/**"
+      ],
+      "rules": {
+        "no-restricted-properties": "off"
+      }
+    },
+    {
+      "files": [
+        "babel.config.js",
+        "vite.config.ts",
+        "svg.d.ts"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
+        "notificationService.ts",
+        "config.ts",
+        "tools/**"
+      ],
+      "rules": {
+        "no-restricted-syntax": "off"
+      }
+    },
+    {
+      "files": [
+        "*.jsx",
+        "*.tsx"
+      ],
+      "rules": {
+        "react-compiler/react-compiler": "error"
+      }
+    }
+  ]
+}

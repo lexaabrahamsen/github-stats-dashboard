@@ -20,11 +20,8 @@ export const LanguagesBreakdown = ({ languageData }: LanguagesBreakdownProps) =>
         padding: '16px',
       }}
     >
-      <CardHeader
-        sx={{ color: '#ffffff' }}
-        title="Languages Breakdown"
-        subheader="subheader"
-      />
+            <CardHeader title="Languages Breakdown" sx={{ paddingBottom: '0', color: 'white', mb: 2 }} />
+
       <PieChart
         series={[
           {
@@ -39,6 +36,27 @@ export const LanguagesBreakdown = ({ languageData }: LanguagesBreakdownProps) =>
           },
         ]}
         height={300}
+        slotProps={{
+          legend: {
+            direction: 'column',
+            labelStyle: {
+              fill: 'white',
+            },
+          },
+        }}
+        sx={{
+          margin: '0 auto',
+          '& .MuiPieArc-root': {
+            stroke: 'transparent',
+          },
+          '& .MuiChartsLegend-mark': {
+            width: 12,
+            height: 12,
+          },
+          '& .MuiChartsLegend-series text': {
+            fill: 'white',
+          },
+        }}
       />
     </Card>
   );
