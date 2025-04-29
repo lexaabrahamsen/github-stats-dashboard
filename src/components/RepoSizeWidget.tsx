@@ -34,12 +34,10 @@ export const RepoSizeWidget = ({ repoSizeData }: RepoSizeWidgetProps) => {
               paddingBottom: 0,
               mb: 2,
               '& .MuiCardHeader-title': {
-                fontSize: '1.25rem',
                 color: 'white',
               },
               '& .MuiCardHeader-subheader': {
                 color: '#A0AEC0',
-                fontSize: '0.875rem',
               },
             }}
           />
