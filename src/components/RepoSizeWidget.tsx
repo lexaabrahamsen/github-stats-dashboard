@@ -69,9 +69,8 @@ export const RepoSizeWidget = ({ repoSizeData }: RepoSizeWidgetProps) => {
             series={[
               {
                 data: repoSizeData.map((r) => r.size),
-                // label: 'Size (KB)',
                 color: theme.palette.primary.main, // ✅ use primary color bars
-                barThickness: 20, // ✅ slightly thinner bars
+                // barThickness: 20, // ✅ slightly thinner bars
               },
             ]}
             layout="horizontal"
