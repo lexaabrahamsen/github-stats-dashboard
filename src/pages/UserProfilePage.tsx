@@ -116,9 +116,6 @@ export const UserProfilePage = () => {
             githubRepos={githubRepos}
           />
         </Grid>
-        <Grid item xs={12}>
-          <TopRepositories topRepos={topRepos} username={username} />
-        </Grid>
         <Grid item xs={12} sm={6}>
           <LanguagesBreakdown languageData={languageData} />
         </Grid>
@@ -127,6 +124,9 @@ export const UserProfilePage = () => {
             <RepoSizeWidget repoSizeData={repoSizeData} />
           </Grid>
         )}
+        <Grid item xs={12}>
+          <TopRepositories topRepos={topRepos} username={username} />
+        </Grid>
       </Grid>
       </Container>
     </>

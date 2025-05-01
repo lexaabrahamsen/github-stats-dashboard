@@ -21,6 +21,7 @@ export const UsernameSearchCard = ({
           padding: '30px',
           backgroundColor: '#111C44',
           borderRadius: '20px',
+          boxShadow: '0px 4px 22.33px rgb(94, 59, 219)',
         }}
       >
         <Grid container direction="column" alignItems="center">
