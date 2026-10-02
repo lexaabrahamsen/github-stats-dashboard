@@ -2,6 +2,8 @@
 
 Search any GitHub username to see a dashboard of their profile, top repositories, language breakdown, and largest repositories.
 
+**[Live demo →](https://lexa-github-stats-dashboard.netlify.app/)**
+
 ## Features
 
 - **Username search** that opens a shareable profile page (`/user?id=<username>`)
@@ -19,13 +21,11 @@ Data comes from the [GitHub REST API](https://docs.github.com/en/rest).
 
 ## Run locally
 
-### 1. Create a GitHub token
+### 1. (Optional) Add a GitHub token
 
-The app calls the GitHub API with a personal access token. Create a [fine-grained token](https://github.com/settings/personal-access-tokens/new) with **Public repositories (read-only)** access and no other permissions.
+The app works without a token, using GitHub's anonymous API limit of 60 requests an hour per visitor. Loading one profile takes about 30, so a token helps if you search often.
 
-### 2. Add it to an env file
-
-Create `.env.local` in the project root:
+To use one, create a [fine-grained token](https://github.com/settings/personal-access-tokens/new) with **Public repositories (read-only)** access and no other permissions, then add it to `.env.local` in the project root:
 
 ```sh
 VITE_GITHUB_TOKEN=your_token_here
@@ -35,7 +35,7 @@ VITE_GITHUB_TOKEN=your_token_here
 
 > ⚠️ Vite builds any `VITE_` variable into the browser bundle, so anyone can read it on a deployed site. Only ever use a token with no permissions beyond reading public data.
 
-### 3. Install and start
+### 2. Install and start
 
 This project uses Yarn (`yarn.lock`):
 

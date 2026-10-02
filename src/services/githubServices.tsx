@@ -1,3 +1,4 @@
+// Optional: without a token, requests are anonymous (60/hour per visitor IP).
 const token = import.meta.env.VITE_GITHUB_TOKEN;
 
 // Fetch GitHub repositories
@@ -5,7 +6,7 @@ export const fetchGithubRepos = async (username: string) => {
   const response = await fetch(
     `https://api.github.com/users/${username}/repos`,
     {
-      headers: { Authorization: `token ${token}` },
+      headers: token ? { Authorization: `token ${token}` } : {},
     }
   );
   if (!response.ok) {
@@ -19,7 +20,7 @@ export const fetchGithubLanguages = async (repos: any[]) => {
   const languageData = await Promise.all(
     repos.map(async (repo: any) => {
       const response = await fetch(repo.languages_url, {
-        headers: { Authorization: `token ${token}` },
+        headers: token ? { Authorization: `token ${token}` } : {},
       });
       if (!response.ok) {
         console.error(`Failed to fetch languages for ${repo.name}`);
@@ -43,7 +44,7 @@ export const fetchGithubLanguages = async (repos: any[]) => {
 // Fetch user details
 export const fetchUserDetails = async (username: string) => {
   const response = await fetch(`https://api.github.com/users/${username}`, {
-    headers: { Authorization: `token ${token}` },
+    headers: token ? { Authorization: `token ${token}` } : {},
   });
   if (!response.ok) {
     throw new Error('Failed to fetch user details');
@@ -58,7 +59,7 @@ export const fetchCommitActivity = async (repos: any[], username: string) => {
     const res = await fetch(
       `https://api.github.com/repos/${username}/${repo.name}/stats/commit_activity`,
       {
-        headers: { Authorization: `token ${token}` },
+        headers: token ? { Authorization: `token ${token}` } : {},
       }
     );
 
